@@ -1,0 +1,26 @@
+8
+4 
+
+euclid 
+
+dm_brute:  1.4810521602630615
+dm_joblib_cp:  23.016777276992798
+dm_joblib_thr:  30.012802362442017
+
+
+6 
+
+euclid 
+
+dm_brute:  1.6804780960083008
+dm_joblib_cp:  25.677464723587036
+dm_joblib_thr:  28.572901725769043
+
+
+8 
+
+euclid 
+
+dm_brute:  1.8855042457580566
+dm_joblib_cp:  25.42772674560547
+dm_joblib_thr:  26.947978973388672

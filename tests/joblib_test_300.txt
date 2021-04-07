@@ -1,0 +1,127 @@
+8
+1 
+
+euclid_np 
+
+dm_brute:  0.6420576572418213
+dm_joblib_cp:  4.449267387390137
+dm_joblib_thr:  4.364837884902954
+
+
+euclid 
+
+dm_brute:  0.26429200172424316
+dm_joblib_cp:  3.745115280151367
+dm_joblib_thr:  3.5991170406341553
+
+
+2 
+
+euclid_np 
+
+dm_brute:  0.6013798713684082
+dm_joblib_cp:  3.642185926437378
+dm_joblib_thr:  6.943150281906128
+
+
+euclid 
+
+dm_brute:  0.2941572666168213
+dm_joblib_cp:  4.095287322998047
+dm_joblib_thr:  6.1154444217681885
+
+
+3 
+
+euclid_np 
+
+dm_brute:  0.6761882305145264
+dm_joblib_cp:  5.386944532394409
+dm_joblib_thr:  6.043914079666138
+
+
+euclid 
+
+dm_brute:  0.29717350006103516
+dm_joblib_cp:  4.095313310623169
+dm_joblib_thr:  5.582478284835815
+
+
+4 
+
+euclid_np 
+
+dm_brute:  0.6662206649780273
+dm_joblib_cp:  4.475412845611572
+dm_joblib_thr:  5.791125774383545
+
+
+euclid 
+
+dm_brute:  0.297177791595459
+dm_joblib_cp:  4.266444206237793
+dm_joblib_thr:  5.063902139663696
+
+
+5 
+
+euclid_np 
+
+dm_brute:  0.6581931114196777
+dm_joblib_cp:  5.70797061920166
+dm_joblib_thr:  6.200106620788574
+
+
+euclid 
+
+dm_brute:  0.29579639434814453
+dm_joblib_cp:  4.127229690551758
+dm_joblib_thr:  5.00511908531189
+
+
+6 
+
+euclid_np 
+
+dm_brute:  0.7661364078521729
+dm_joblib_cp:  4.802178859710693
+dm_joblib_thr:  5.503544569015503
+
+
+euclid 
+
+dm_brute:  0.3031885623931885
+dm_joblib_cp:  4.162516117095947
+dm_joblib_thr:  4.949190139770508
+
+
+7 
+
+euclid_np 
+
+dm_brute:  0.7031002044677734
+dm_joblib_cp:  4.67842173576355
+dm_joblib_thr:  5.712282657623291
+
+
+euclid 
+
+dm_brute:  0.29709744453430176
+dm_joblib_cp:  4.423330545425415
+dm_joblib_thr:  4.660662412643433
+
+
+8 
+
+euclid_np 
+
+dm_brute:  0.7280118465423584
+dm_joblib_cp:  4.7338128089904785
+dm_joblib_thr:  5.7766501903533936
+
+
+euclid 
+
+dm_brute:  0.3540205955505371
+dm_joblib_cp:  4.546610355377197
+dm_joblib_thr:  4.719797611236572
