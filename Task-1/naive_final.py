@@ -204,7 +204,7 @@ def update_distance_matrix(dist_mat, pos):
     return dist_mat
 
 
-def hierarchicalClustering(data):
+def hierarchical_clustering(data):
     '''
     Perform hierarchical clustering (agglomorative) on a dataset. Returns a linkage matrix as described 
     in the beginning of this file.
@@ -260,16 +260,36 @@ def hierarchicalClustering(data):
     return linkage_matrix
 
 
-test_data = np.random.rand(200,15)
+raw_df = pd.read_csv('cc-data.csv')
+raw_df = raw_df.drop('CUST_ID', axis = 1) 
+raw_df.fillna(method ='ffill', inplace = True) 
 
-my_impl = hierarchicalClustering(test_data)
+# Standardize data
+scaler = StandardScaler() 
+scaled_df = scaler.fit_transform(raw_df) 
+  
+# Normalizing the Data 
+normalized_df = normalize(scaled_df) 
+  
+# Converting the numpy array into a pandas DataFrame 
+normalized_df = pd.DataFrame(normalized_df) 
+  
+# Reducing the dimensions of the data 
+pca = PCA(n_components = 2) 
+test_data = pca.fit_transform(normalized_df) 
 
+
+result = hierarchical_clustering(test_data)
 
 plt.figure(figsize =(15, 15)) 
 plt.title('my') 
-Dendrogram = shc.dendrogram(my_impl)
-# plt.title('test') 
-# Dendrogram = shc.dendrogram((shc.linkage(test_data, method ='complete', metric = "euclidean")))
+Dendrogram = shc.dendrogram(result)
+
+
+#test_data = np.random.rand(200,15)
+
+
+
 
 
 ### FOR TESTING
@@ -277,6 +297,6 @@ Dendrogram = shc.dendrogram(my_impl)
 # errors and doesn't really make any difference.
 
 # professional_implementation = shc.linkage(test_data, method ='complete', metric = "euclidean")
-# tests = [(x,y) for i in range(len(professional_implementation)) for x,y in zip(my_impl[i],professional_implementation[i]) if x != y ]
+# tests = [(x,y) for i in range(len(professional_implementation)) for x,y in zip(result[i],professional_implementation[i]) if x != y ]
 # print(tests)
-# print(all([all(x == y) for x,y in zip(my_impl,professional_implementation)]))
+# print(all([all(x == y) for x,y in zip(result,professional_implementation)]))
