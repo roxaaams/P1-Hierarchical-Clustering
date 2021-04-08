@@ -9,6 +9,8 @@ from sklearn.decomposition import PCA
 import scipy.cluster.hierarchy as shc
 import sys
 
+from collections import deque
+
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -27,7 +29,19 @@ np.set_printoptions(threshold=sys.maxsize)
 
 '''
 
-def nearest_neighbor():
+def nearest_neighbor(a):
+	active_clusters = a
+	distances = []
+
+	S = deque(active_clusters[0])
+
+	while len(active_clusters) > 1:
+		if not S:
+			S = deque(active_clusters[0])
+			active_clusters.remove(active_clusters.index(S[0]))
+		
+
+		
 	pass
 
 
