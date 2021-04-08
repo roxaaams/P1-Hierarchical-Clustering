@@ -43,7 +43,7 @@ def nearest_neighbor(a):
 			S = deque(active_clusters[0])
 		nearest_distance, cluster = find_nearest(active_clusters, S[-1] if len(S) == 1 else active_clusters[0])
 		np.delete(active_clusters, np.where(active_clusters == S[-1]))
-		if cluster.all() in S:
+		if cluster.all() in S.any():
 			predecessor_cluster = S.pop()
 			comparable_cluster = S.pop()
 			clusters.append({ distance: nearest_distance, cluster: cluster})
