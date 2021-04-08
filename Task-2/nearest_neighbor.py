@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 #from sklearn.cluster import AgglomerativeClustering 
 from sklearn.preprocessing import StandardScaler, normalize
@@ -29,6 +29,8 @@ np.set_printoptions(threshold=sys.maxsize)
 
 '''
 
+clusters = []
+
 def nearest_neighbor(a):
 	active_clusters = a
 	distances = []
@@ -36,14 +38,19 @@ def nearest_neighbor(a):
 	S = deque(active_clusters[0])
 
 	while len(active_clusters) > 1:
+		distances = []
 		if not S:
 			S = deque(active_clusters[0])
-			active_clusters.remove(active_clusters.index(S[0]))
-		
-
-		
-	pass
-
+		nearest_distance, cluster = find_nearest(active_clusters, S[-1] if len(S) == 1 else active_clusters[0])
+		np.delete(active_clusters, np.where(active_clusters == S[-1]))
+		if cluster.all() in S:
+			predecessor_cluster = S.pop()
+			comparable_cluster = S.pop()
+			clusters.append({ distance: nearest_distance, cluster: cluster})
+			predecessor_cluster.extend(comparable_cluster)
+			S.append(predecessor_cluster)
+		else:
+			S.append(cluster)
 
 
 def euclidean_norm(points):
@@ -51,37 +58,40 @@ def euclidean_norm(points):
 	res = 0
 	if isinstance(points[0], int):
 		return np.sqrt((points[0]-points[1])**2)
-	for point in points:
-		res += (point[0]-point[1])**2
+
+	res += (points[0]-points[1])**2
 
 	return np.sqrt(res)
 
 def complete_linkage(cluster1, cluster2):
 
 	distances = []
+	print("cluster1", cluster1)
+	print("cluster2", cluster2)
+
 
 	for point_x in cluster1:
+		#print("cluster1", cluster1)
 		for point_y in cluster2:
+			#print("cluster2", cluster2)
 			distances.append(euclidean_norm([point_x, point_y]))
 
 	return max(distances)
 
-def find_nearest(data):
+def find_nearest(data, cluster):
 	l = len(data)
 
-	nearest = []
-
+	nearest_distance = 0
+	nearest_cluster = []
 	for i in range(0, l):
-		for j in range(i+1, l):
-			if nearest == []:
-				nearest = [i, j, complete_linkage(data[i], data[j])]
-			elif nearest[2] > complete_linkage(data[i], data[j]):
-				nearest = [i, j, complete_linkage(data[i], data[j])]
-	print(data[nearest[0]], data[nearest[1]])
-	return nearest
-
-
-
+		if nearest_distance == 0:
+			nearest_distance = complete_linkage(data[i], cluster)
+		elif nearest_distance > complete_linkage(data[i], cluster):
+			nearest_distance = complete_linkage(data[i], cluster)
+		nearest_cluster = data[i]
+	#print(data[nearest_distance, data[nearest_distance]])
+	print(nearest_distance, nearest_cluster)
+	return [ nearest_distance, nearest_cluster ]
 
 # read in data
 raw_df = pd.read_csv('CC GENERAL.csv')
@@ -109,7 +119,8 @@ X_principal.head(2)
 
 # convert dataFrame to list
 a = np.array(np.array(X_principal.values.tolist()))
-print(a)
+#print(a)
 
-
+nearest_neighbor(a)
+	
 
