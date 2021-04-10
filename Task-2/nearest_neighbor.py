@@ -50,7 +50,7 @@ a = X_principal.values.tolist()
 
 a = a[:10]
 
-
+cluster_index = len(a)
 '''
 
 	Initialize the set of active clusters to consist of n one-point clusters, one for each input point.
@@ -82,6 +82,7 @@ def merge_clusters(c1, c2):
 
 
 def nearest_neighbor():
+	global cluster_index
 
 	# active clustsers are saved as indices to points in a
 	active_clusters = [i for i in range(0, len(a))]
@@ -95,28 +96,27 @@ def nearest_neighbor():
 	# S is a stack
 	S = deque()
 
-
 	while len(active_clusters) >= 1:
 		print("S every iterations", S)
 		distances = []
 
 		# if stack is empty, append the first active cluster
 		if not S:
-			S = deque([active_clusters[0]])
-			active_clusters.remove(S[-1])
-
+			S = deque([0, [active_clusters[0]]])
+			print("printing S", S)
+			active_clusters.remove(S[-1][-1])
 
 		# when a cluster is pushed to the stack, delete it in active_clusters
 
 		if len(S) <= 1:
-			nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1])
-			S.append(cluster)
+			nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1][-1])
+			S.append([cluster,  cluster])
 			clusters.append({ "distance": nearest_distance, "cluster": cluster})
 			active_clusters.remove(cluster)
 		else:
-			nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1], S[-2])
+			nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1][-1], S[-1][-2])
 			if is_stack:
-				cluster = S[-2]
+				cluster = S[-1][-2]
 
 				predecessor_cluster = S.pop()
 				comparable_cluster = S.pop()
@@ -124,9 +124,10 @@ def nearest_neighbor():
 				merged_cluster = merge_clusters(predecessor_cluster, comparable_cluster)
 
 				clusters.append({ "distance": nearest_distance, "cluster": merged_cluster})
-				S.append(merged_cluster)
+				S.append([cluster_index, merged_cluster ])
+				cluster_index += 1
 			else:
-				S.append(cluster)
+				S.append([cluster, cluster])
 				clusters.append({ "distance": nearest_distance, "cluster": cluster})
 				active_clusters.remove(cluster)
 
@@ -135,11 +136,11 @@ def nearest_neighbor():
 	# combine remaining clusters on the stack
 	while len(S) >  1:
 
-		nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1], S[-2])
+		nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1][-1], S[-1][-2])
 
 		if is_stack:
 			print("entered the if")
-			cluster = S[-2]
+			cluster = S[-1][-2]
 
 			predecessor_cluster = S.pop()
 			comparable_cluster = S.pop()
@@ -147,10 +148,22 @@ def nearest_neighbor():
 			merged_cluster = merge_clusters(predecessor_cluster, comparable_cluster)
 
 			clusters.append({ "distance": nearest_distance, "cluster": merged_cluster})
-			S.append(merged_cluster)
+			S.append([cluster_index, merged_cluster])
+			cluster_index += 1
 	
-	# print all clusters for debugging		
+	# print all clusters for debugging
+			
 	print(clusters)
+
+	'''
+	line =  "[		{c1}.		{c2}.		{distance}			{nr}.		]"
+	total_number_elements_per_cluster = []
+	print("[")
+	for cl in clusters:
+		if (not isinstance(cl.cluster, int)):
+			total_number_elements_per_cluster.append(len(cl.cluster))
+		print(line.format( , , , ))
+   '''
 
 
 # calculate the euclidean norm of two points
@@ -191,6 +204,8 @@ def find_nearest(active, cluster, stack_pred=None):
 		if nearest_distance < 0 or nearest_distance > temp_distance:
 			nearest_distance = temp_distance
 			nearest_cluster = i
+			#nearest_index = 
+
 
 	if stack_pred != None:
 
