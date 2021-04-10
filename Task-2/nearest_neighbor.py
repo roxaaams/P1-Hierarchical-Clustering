@@ -3,11 +3,14 @@ import numpy as np
 #import matplotlib.pyplot as plt
 
 #from sklearn.cluster import AgglomerativeClustering 
+from scipy.cluster.hierarchy import dendrogram, linkage
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.decomposition import PCA
 #from sklearn.metrics import silhouette_score
 import scipy.cluster.hierarchy as shc
 import sys
+
+from matplotlib import pyplot as plt
 
 from collections import deque
 
@@ -44,7 +47,9 @@ X_principal.head(2)
 
 # convert dataFrame to list
 a = X_principal.values.tolist()
+
 a = a[:10]
+
 
 '''
 
@@ -58,7 +63,6 @@ a = a[:10]
 
 
 '''
-
 
 clusters = []
 
@@ -236,6 +240,24 @@ def find_nearest(active, cluster, stack_pred=None):
 
 
 nearest_neighbor()
+
+professional_implementation = shc.linkage(a, method ='complete', metric = "euclidean")
+print(professional_implementation)
+#tests = [(x,y) for i in range(len(professional_implementation)) for x,y in zip(result[i],professional_implementation[i]) if x != y ]
+
+#sch.dendrogram
+#print(tests)
+#print(all([all(x == y) for x,y in zip(result,professional_implementation)]))
+
+linked = linkage(a, 'complete')
+
+labelList = range(0, 10)
+
+plt.figure(figsize=(10, 7))
+shc.dendrogram(linked,)
+plt.show()
+
+
 	
 #print(merge_clusters(5, [2, 4, 3]))
 
