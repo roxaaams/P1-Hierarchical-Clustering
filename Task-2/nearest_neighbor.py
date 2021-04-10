@@ -147,8 +147,6 @@ def nearest_neighbor():
 				active_clusters.remove(cluster)
 
 		print(S)
-		print(clusters)
-
 
 		'''
 		if cluster in S:
@@ -165,6 +163,33 @@ def nearest_neighbor():
 		else:
 			S.append(cluster)
 		'''
+
+	while len(S) >  1:
+		print(active_clusters)
+		print(S[-1])
+		print(S[-2])
+		nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1], S[-2])
+		if is_stack:
+			print("entered the if")
+			cluster = S[-2]
+
+			predecessor_cluster = S.pop()
+			comparable_cluster = S.pop()
+
+			merged_cluster = merge_clusters(predecessor_cluster, comparable_cluster)
+
+			clusters.append({ "distance": nearest_distance, "cluster": merged_cluster})
+			S.append(merged_cluster)
+		print(S)
+		break
+		#else:
+		#	print("got into else")
+		#else:
+		#	S.append(cluster)
+		#	clusters.append({ "distance": nearest_distance, "cluster": cluster})
+		#	active_clusters.remove(cluster)
+			
+	print(clusters)
 
 
 def euclidean_norm(points, dimensions=2):
