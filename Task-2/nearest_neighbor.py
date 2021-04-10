@@ -44,7 +44,7 @@ X_principal.head(2)
 
 # convert dataFrame to list
 a = X_principal.values.tolist()
-
+a = a[:10]
 
 '''
 
@@ -64,6 +64,7 @@ clusters = []
 
 
 def merge_clusters(c1, c2):
+
 	merged_cluster = []
 	if isinstance(c1, int):
 		merged_cluster.append(c1)
@@ -84,12 +85,13 @@ def nearest_neighbor():
 	# saves distances of clusters in stack
 	# maybe ??
 	distances = []
+	clusters = []
 
 	# S is a stack
 	S = deque()
 
 
-	while len(active_clusters) > 1:
+	while len(active_clusters) >= 1:
 		print("S every iterations", S)
 		distances = []
 
@@ -98,6 +100,7 @@ def nearest_neighbor():
 			print("hii")
 			S = deque([active_clusters[0]])
 			active_clusters.remove(S[-1])
+
 
 		# when a cluster is pushed to the stack, delete it in active_clusters
 		#np.delete(active_clusters, np.where(active_clusters == S[-1]))
@@ -120,6 +123,7 @@ def nearest_neighbor():
 		if len(S) <= 1:
 			nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1])
 			S.append(cluster)
+			clusters.append({ "distance": nearest_distance, "cluster": cluster})
 			active_clusters.remove(cluster)
 		else:
 			nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1], S[-2])
@@ -135,10 +139,11 @@ def nearest_neighbor():
 				S.append(merged_cluster)
 			else:
 				S.append(cluster)
+				clusters.append({ "distance": nearest_distance, "cluster": cluster})
 				active_clusters.remove(cluster)
 
 		print(S)
-
+		print(clusters)
 
 
 		'''
