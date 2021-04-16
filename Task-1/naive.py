@@ -113,7 +113,7 @@ def find_min_parallel(distance_matrix, offset):
 
     
 
-def find_min(distance_matrix, jobs):
+def find_min_wrapper(distance_matrix, jobs):
     """
     "Wrapper" function to find minimum element and its position in a full distance-matrix.
 
@@ -143,9 +143,36 @@ def find_min(distance_matrix, jobs):
 
     return [pos, val]
 
+def find_min_single(distance_matrix, jobs):
+    """
+    Function to find minimum element of distance matrix and its position, not parallelized.
+    Will be used on smaller datasets to reduce overhead of parallelization
+
+    Parameters
+    ----------
+    distance_matrix : 2d array
+        A full distance matrix.
+    jobs : int
+        Not used in function, included to simply switch between functions.
+
+    Returns
+    -------
+    list
+        val = minimal element of distance_matrix.
+        pos = position of val in matrix.
+
+    """
+    val = np.amin(distance_matrix[distance_matrix.astype(bool)])
+
+    pos = np.where(distance_matrix == val)
+
+    pos = [pos[0][0], pos[1][0]]
+    
+    return [pos, val]
+
 def create_split_indices(data, amount = 100):
     """
-    Simple function to create indices to split data for parallelization. Not my proudest work.
+    Simple function to create indices to split data for parallelization. 
 
     Parameters
     ----------
@@ -189,19 +216,25 @@ def hierarchical_clustering(data):
             l_m[3]: value with which the clusters have been merged
 
     '''
-    #set number of processeses, -1 equals all possible
+    # set number of processeses, -1 equals all possible
     jobs = -1
     
-    #create distance matrix
+    # create distance matrix
     
     distance_matrix = pair_dist(data)
     
     ##First iteration done "manually"
     
-    #pick element
+    # Choose if parallelization should be used. Parallelizing introduces overhead, so for smaller datasets it's quicker to not 
+    # parallelize.
+    if(len(data) <= 1500):
+        find_min = find_min_single
+    else: find_min = find_min_wrapper
+    
+    # pick element
     [pos,val] = find_min(distance_matrix, jobs)
 
-    #array to keep track of number of elements in each cluster (in the beginning, each point is a cluster)
+    # array to keep track of number of elements in each cluster (in the beginning, each point is a cluster)
     number_elements_in_cluster = list(np.ones(len(data)))
     
     #amount of clusters
@@ -269,7 +302,7 @@ normalized_df = pd.DataFrame(normalized_df)
 pca = PCA(n_components = 2) 
 test_data = pca.fit_transform(normalized_df) 
 
-test_data = np.random.rand(8500,2)
+test_data = np.random.rand(1000,2)
 
 start = time.time()
 my_result = hierarchical_clustering(test_data)
