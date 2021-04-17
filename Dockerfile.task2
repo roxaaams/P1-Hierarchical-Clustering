@@ -1,0 +1,13 @@
+FROM python:3.7-slim
+
+WORKDIR /P1-HIERARCHICAL-CLUSTERING
+
+COPY /Task-2 .
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+CMD ["nearest_neighbor.py"]
+
+ENTRYPOINT ["python3"]
