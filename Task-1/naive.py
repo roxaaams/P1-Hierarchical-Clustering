@@ -27,29 +27,6 @@ import time
 ### and here: https://stackoverflow.com/questions/9838861/scipy-linkage-format
 
 
-def euclidian_dist(a,b):
-    '''
-    
-    Parameters
-    ----------
-    a : point A, vector.
-    b : point B, vector.
-
-    Returns
-    -------
-    euclidian distance of A and B
-    
-    Note
-    -------
-    This is quicker than using numpy, because for this small operations the function calls to numpy create too much overhead
-
-    '''
-    
-    dist = 0
-    for i in range(len(a)):
-        dist += (a[i] - b[i]) ** 2
-    return dist ** (1/2)
-
 
 def update_distance_matrix(dist_mat, pos):
     '''
