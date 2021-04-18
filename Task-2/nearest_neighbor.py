@@ -66,15 +66,12 @@ cluster_index = len(a)
 
 clusters = []
 
-
 all_distances = []
-#for i in a:
-#	for j in a:
-#		euclidean_norm(i, j)
 
 
 
 # rewrite this
+
 def merge_clusters(index, c1, c2):
 
 	merged_cluster = []
@@ -124,6 +121,9 @@ def nearest_neighbor():
 		# consists of 2-value arrays where the first value is the cluster index, 
 		# and the second value is the cluster
 
+
+		# change clusters saved in S to contain only indices
+
 		# if stack is empty, append the first active cluster
 		if not S:
 			S.append([active_clusters[0], [active_clusters[0]]]) # put val in braces?
@@ -137,6 +137,7 @@ def nearest_neighbor():
 			S.append([cluster,  [cluster]])
 			clusters.append({ "distance": nearest_distance, "cluster": cluster})
 			active_clusters.remove(cluster)
+
 		else:
 			unpacked_1 = unpack_cluster(S[-1])
 			unpacked_2 = unpack_cluster(S[-2])
@@ -214,14 +215,26 @@ def euclidean_norm(points, dimensions=2):
 
 	return np.sqrt(res)
 
-# find the distance between two clusters with the complete linkage method
-def complete_linkage(cluster1, cluster2):
+
+def complete_linkage_old(cluster1, cluster2):
 
 	distances = []
 
 	for point_x in cluster1:
 		for point_y in cluster2:
 			distances.append(euclidean_norm([point_x, point_y]))
+
+	return max(distances)
+
+# find the distance between two clusters with the complete linkage method
+# todo: optimize out complete linkage by saving distances between clusters
+def complete_linkage(cluster1, cluster2):
+
+	distances = []
+
+	for point_x in cluster1:
+		for point_y in cluster2:
+			distances.append(all_distances[point_x][point_y])
 
 	return max(distances)
 
