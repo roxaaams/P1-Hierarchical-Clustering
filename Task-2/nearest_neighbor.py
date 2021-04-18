@@ -67,18 +67,38 @@ cluster_index = len(a)
 clusters = []
 
 
-def merge_clusters(c1, c2):
+all_distances = []
+#for i in a:
+#	for j in a:
+#		euclidean_norm(i, j)
+
+
+
+# rewrite this
+def merge_clusters(index, c1, c2):
 
 	merged_cluster = []
-	if isinstance(c1, int):
-		merged_cluster.append(c1)
+
+	c1 = unpack_cluster(c1)
+	c2 = unpack_cluster(c2)
+
+	merged_cluster.extend(c1)
+	merged_cluster.extend(c2)
+
+	return [index, merged_cluster]
+
+
+def unpack_cluster(cluster):
+	unpacked_cluster = []
+	if isinstance(cluster[0], int) and isinstance(cluster[-1][0], int):
+		return cluster[-1]
+	elif isinstance(cluster[0], int):
+		for val in cluster[1]:
+			unpacked_cluster.append(val[-1][0])
 	else:
-		merged_cluster.extend(c1)
-	if isinstance(c2, int):
-		merged_cluster.append(c2)
-	else:
-		merged_cluster.extend(c2)
-	return merged_cluster
+		for val in cluster:
+			unpacked_cluster.append(val[-1][0])
+	return unpacked_cluster
 
 
 def nearest_neighbor():
@@ -86,7 +106,7 @@ def nearest_neighbor():
 
 	# active clustsers are saved as indices to points in a
 	active_clusters = [i for i in range(0, len(a))]
-
+	active_clusters = active_clusters[::-1]
 	distances = []
 	clusters = []
 
@@ -100,60 +120,78 @@ def nearest_neighbor():
 		print("S every iterations", S)
 		distances = []
 
+		# S structure:
+		# consists of 2-value arrays where the first value is the cluster index, 
+		# and the second value is the cluster
+
 		# if stack is empty, append the first active cluster
 		if not S:
-			S = deque([0, [active_clusters[0]]])
-			print("printing S", S)
-			active_clusters.remove(S[-1][-1])
+			S.append([active_clusters[0], [active_clusters[0]]]) # put val in braces?
+			active_clusters.remove(active_clusters[0])
 
 		# when a cluster is pushed to the stack, delete it in active_clusters
 
 		if len(S) <= 1:
-			nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1][-1])
-			S.append([cluster,  cluster])
+			unpacked = unpack_cluster(S[-1])
+			nearest_distance, cluster, is_stack = find_nearest(active_clusters, unpacked)
+			S.append([cluster,  [cluster]])
 			clusters.append({ "distance": nearest_distance, "cluster": cluster})
 			active_clusters.remove(cluster)
 		else:
-			nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1][-1], S[-1][-2])
+			unpacked_1 = unpack_cluster(S[-1])
+			unpacked_2 = unpack_cluster(S[-2])
+			nearest_distance, cluster, is_stack = find_nearest(active_clusters, unpacked_1, unpacked_2)
 			if is_stack:
 				cluster = S[-1][-2]
 
 				predecessor_cluster = S.pop()
 				comparable_cluster = S.pop()
 
-				merged_cluster = merge_clusters(predecessor_cluster, comparable_cluster)
+				merged_cluster = merge_clusters(cluster_index, predecessor_cluster, comparable_cluster)
 
-				clusters.append({ "distance": nearest_distance, "cluster": merged_cluster})
-				S.append([cluster_index, merged_cluster ])
+				#clusters.append({ "distance": nearest_distance, "cluster": merged_cluster})
+				clusters.append({ "distance": nearest_distance, "cluster": [cluster_index,[predecessor_cluster[0], comparable_cluster[0]]]})
+
+				# add predecessor and comparable cluster index to clusters instead
+				S.append(merged_cluster)
 				cluster_index += 1
 			else:
-				S.append([cluster, cluster])
+				print(cluster)
+				S.append([cluster, [cluster]])
 				clusters.append({ "distance": nearest_distance, "cluster": cluster})
+				# add predecessor and comparable cluster index to clusters instead
 				active_clusters.remove(cluster)
 
-		print(S)
 
 	# combine remaining clusters on the stack
 	while len(S) >  1:
 
-		nearest_distance, cluster, is_stack = find_nearest(active_clusters, S[-1][-1], S[-1][-2])
+		unpacked_1 = unpack_cluster(S[-1])
+		unpacked_2 = unpack_cluster(S[-2])
+
+		nearest_distance, cluster, is_stack = find_nearest(active_clusters, unpacked_1, unpacked_2)
 
 		if is_stack:
-			print("entered the if")
 			cluster = S[-1][-2]
 
 			predecessor_cluster = S.pop()
 			comparable_cluster = S.pop()
 
-			merged_cluster = merge_clusters(predecessor_cluster, comparable_cluster)
+			merged_cluster = merge_clusters(cluster_index, predecessor_cluster, comparable_cluster)
 
-			clusters.append({ "distance": nearest_distance, "cluster": merged_cluster})
-			S.append([cluster_index, merged_cluster])
+			#clusters.append({ "distance": nearest_distance, "cluster": merged_cluster})
+			clusters.append({ "distance": nearest_distance, "cluster": [cluster_index,[predecessor_cluster[0], comparable_cluster[0]]]})
+
+			# add predecessor and comparable cluster index to clusters instead
+
+			S.append(merged_cluster)
 			cluster_index += 1
 	
 	# print all clusters for debugging
 			
-	print(clusters)
+	#print(clusters)
+	for i in clusters:
+		print(i)
 
 	'''
 	line =  "[		{c1}.		{c2}.		{distance}			{nr}.		]"
@@ -187,6 +225,7 @@ def complete_linkage(cluster1, cluster2):
 
 	return max(distances)
 
+
 # find nearest cluster
 def find_nearest(active, cluster, stack_pred=None):
 
@@ -204,8 +243,6 @@ def find_nearest(active, cluster, stack_pred=None):
 		if nearest_distance < 0 or nearest_distance > temp_distance:
 			nearest_distance = temp_distance
 			nearest_cluster = i
-			#nearest_index = 
-
 
 	if stack_pred != None:
 
@@ -221,6 +258,21 @@ def find_nearest(active, cluster, stack_pred=None):
 	return [ nearest_distance, nearest_cluster, is_stack ]
 
 
+
+def euclidean_norm_numeric(points, dimensions=2):
+
+	res = 0
+
+	for component in range(0, dimensions):
+		res += (points[0][component]-points[1][component])**2
+
+	return np.sqrt(res)
+
+all_distances = [[euclidean_norm_numeric([i, j]) for j in a] for i in a]
+#all_distances = [[[i,j] for j in range(0, len(a))] for i in range(0, len(a))]
+
+for line in all_distances:
+	print(line)
 
 nearest_neighbor()
 
