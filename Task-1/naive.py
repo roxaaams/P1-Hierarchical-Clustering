@@ -286,57 +286,53 @@ def hierarchical_clustering(data):
 
     return linkage_matrix
 
-if __name__ == "__main__":
+
+
     
-    arguments = sys.argv
-    assert(len(arguments) in [1, 2])
-    
-    raw_df = pd.read_csv('cc-data.csv')
-    raw_df = raw_df.drop('CUST_ID', axis = 1) 
-    raw_df.fillna(method ='ffill', inplace = True) 
-    
-    # Standardize data
-    scaler = StandardScaler() 
-    scaled_df = scaler.fit_transform(raw_df) 
-      
-    # Normalizing the Data 
-    normalized_df = normalize(scaled_df) 
-      
-    # Converting the numpy array into a pandas DataFrame 
-    normalized_df = pd.DataFrame(normalized_df) 
-      
-    # Reducing the dimensions of the data 
-    pca = PCA(n_components = 2) 
-    test_data = pca.fit_transform(normalized_df) 
-    if(len(arguments) == 2):
-        index = int(arguments[1])
-        test_data = test_data[:index]
-    
-    ##uncomment next line to enter size of test set manually
-    # test_data = test_data[:1000]
-    print(len(test_data))
-    start = time.time()
-    my_result = hierarchical_clustering(test_data)
-    stop = time.time()
-    print("Our implementation: ", stop - start, "s")
-    
-    plt.figure(figsize =(15, 15)) 
-    plt.title('Ours') 
-    Dendrogram = shc.dendrogram(my_result)
-    
-    start = time.time()
-    professional_implementation = shc.linkage(test_data, method ='complete', metric = "euclidean")
-    stop = time.time()
-    print("Professional implementation: ", stop - start, "s")
-    
-    plt.title('Professional') 
-    Dendrogram = shc.dendrogram(professional_implementation)
-    
-    
-    print(all([round(x,7) == round(y,7) 
-                for i in range(len(professional_implementation)) 
-                for x,y in zip(my_result[i], professional_implementation[i])]
-              ))
+raw_df = pd.read_csv('cc-data.csv')
+raw_df = raw_df.drop('CUST_ID', axis = 1) 
+raw_df.fillna(method ='ffill', inplace = True) 
+
+# Standardize data
+scaler = StandardScaler() 
+scaled_df = scaler.fit_transform(raw_df) 
+  
+# Normalizing the Data 
+normalized_df = normalize(scaled_df) 
+  
+# Converting the numpy array into a pandas DataFrame 
+normalized_df = pd.DataFrame(normalized_df) 
+  
+# Reducing the dimensions of the data 
+pca = PCA(n_components = 2) 
+test_data = pca.fit_transform(normalized_df) 
+
+##uncomment next line to enter size of test set manually
+# test_data = test_data[:800]
+
+start = time.time()
+my_result = hierarchical_clustering(test_data)
+stop = time.time()
+print("Our implementation: ", stop - start, "s")
+
+plt.figure(figsize =(15, 15)) 
+plt.title('Ours') 
+Dendrogram = shc.dendrogram(my_result)
+
+start = time.time()
+professional_implementation = shc.linkage(test_data, method ='complete', metric = "euclidean")
+stop = time.time()
+print("Professional implementation: ", stop - start, "s")
+
+##Uncomment to view dendrogramm of scipy implementation
+# plt.title('Professional') 
+# Dendrogram = shc.dendrogram(professional_implementation)
+
+
+print(all([round(x,7) == round(y,7) 
+            for i in range(len(professional_implementation)) 
+            for x,y in zip(my_result[i], professional_implementation[i])]
+          ))
 
 
 
