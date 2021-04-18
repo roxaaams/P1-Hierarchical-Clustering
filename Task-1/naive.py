@@ -21,7 +21,6 @@ from joblib import Parallel, delayed
 
 import time
 
-import sys
 
 ### Using a "linkagematrix" to later plot dendrogram from scipy.cluster.hierarchy and keep track of clusters
 ### as described here:  https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html
