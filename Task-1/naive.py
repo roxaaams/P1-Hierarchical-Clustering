@@ -21,11 +21,34 @@ from joblib import Parallel, delayed
 
 import time
 
-
 ### Using a "linkagematrix" to later plot dendrogram from scipy.cluster.hierarchy and keep track of clusters
 ### as described here:  https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html
 ### and here: https://stackoverflow.com/questions/9838861/scipy-linkage-format
 
+
+
+def euclidian_dist(a,b):
+    '''
+    
+    Parameters
+    ----------
+    a : point A, vector.
+    b : point B, vector.
+
+    Returns
+    -------
+    euclidian distance of A and B
+    
+    Note
+    -------
+    This is quicker than using numpy, because for this small operations the function calls to numpy create too much overhead
+
+    '''
+    
+    dist = 0
+    for i in range(len(a)):
+        dist += (a[i] - b[i]) ** 2
+    return dist ** (1/2)
 
 
 def update_distance_matrix(dist_mat, pos):
@@ -263,7 +286,6 @@ def hierarchical_clustering(data):
     return linkage_matrix
 
 
-
     
 raw_df = pd.read_csv('cc-data.csv')
 raw_df = raw_df.drop('CUST_ID', axis = 1) 
@@ -292,7 +314,7 @@ stop = time.time()
 print("Our implementation: ", stop - start, "s")
 
 plt.figure(figsize =(15, 15)) 
-plt.title('Ours') 
+plt.title("Figure1: Our implementation")
 Dendrogram = shc.dendrogram(my_result)
 
 start = time.time()
@@ -301,7 +323,7 @@ stop = time.time()
 print("Professional implementation: ", stop - start, "s")
 
 ##Uncomment to view dendrogramm of scipy implementation
-# plt.title('Professional') 
+# plt.title('Figure2: Professional implementation, same data set') 
 # Dendrogram = shc.dendrogram(professional_implementation)
 
 
