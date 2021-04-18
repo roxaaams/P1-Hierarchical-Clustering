@@ -13,9 +13,10 @@ import sys
 from matplotlib import pyplot as plt
 
 from collections import deque
+from sklearn.metrics import pairwise_distances as pair_dist
 
 
-np.set_printoptions(threshold=sys.maxsize)
+np.set_printoptions(threshold=sys.maxsize, precision=2)
 
 
 
@@ -66,13 +67,14 @@ cluster_index = len(a)
 
 clusters = []
 
-all_distances = []
+global distance_matrix 
+distance_matrix = pair_dist(a)
 
 
 
 # rewrite this
 
-def merge_clusters(index, c1, c2):
+def merge_clusters(pos, c1, c2):
 
 	merged_cluster = []
 
@@ -82,7 +84,9 @@ def merge_clusters(index, c1, c2):
 	merged_cluster.extend(c1)
 	merged_cluster.extend(c2)
 
-	return [index, merged_cluster]
+	#distance_matrix = update_distance_matrix(distance_matrix, pos)
+
+	return [pos, merged_cluster]
 
 
 def unpack_cluster(cluster):
@@ -100,6 +104,7 @@ def unpack_cluster(cluster):
 
 def nearest_neighbor():
 	global cluster_index
+	global distance_matrix 
 
 	# active clustsers are saved as indices to points in a
 	active_clusters = [i for i in range(0, len(a))]
@@ -114,7 +119,6 @@ def nearest_neighbor():
 	S = deque()
 
 	while len(active_clusters) >= 1:
-		print("S every iterations", S)
 		distances = []
 
 		# S structure:
@@ -153,11 +157,21 @@ def nearest_neighbor():
 				#clusters.append({ "distance": nearest_distance, "cluster": merged_cluster})
 				clusters.append({ "distance": nearest_distance, "cluster": [cluster_index,[predecessor_cluster[0], comparable_cluster[0]]]})
 
+
 				# add predecessor and comparable cluster index to clusters instead
+				pos = sorted([min(predecessor_cluster[1]), min(comparable_cluster[1])])
+
+				print(predecessor_cluster)
+				print(comparable_cluster)
+				print(pos)
+				print(nearest_distance)
+				print(distance_matrix)
+
+				distance_matrix = update_distance_matrix(distance_matrix, pos)
+
 				S.append(merged_cluster)
 				cluster_index += 1
 			else:
-				print(cluster)
 				S.append([cluster, [cluster]])
 				clusters.append({ "distance": nearest_distance, "cluster": cluster})
 				# add predecessor and comparable cluster index to clusters instead
@@ -177,6 +191,17 @@ def nearest_neighbor():
 
 			predecessor_cluster = S.pop()
 			comparable_cluster = S.pop()
+			
+			pos = sorted([min(predecessor_cluster[1]), min(comparable_cluster[1])])
+
+			print("second while loop")
+			print(predecessor_cluster)
+			print(comparable_cluster)
+			print(pos)
+			print(nearest_distance)
+			print(distance_matrix)
+
+			distance_matrix = update_distance_matrix(distance_matrix, pos)
 
 			merged_cluster = merge_clusters(cluster_index, predecessor_cluster, comparable_cluster)
 
@@ -187,7 +212,8 @@ def nearest_neighbor():
 
 			S.append(merged_cluster)
 			cluster_index += 1
-	
+
+
 	# print all clusters for debugging
 			
 	#print(clusters)
@@ -228,13 +254,23 @@ def complete_linkage_old(cluster1, cluster2):
 
 # find the distance between two clusters with the complete linkage method
 # todo: optimize out complete linkage by saving distances between clusters
-def complete_linkage(cluster1, cluster2):
+def complete_linkage_old2(cluster1, cluster2):
 
 	distances = []
 
 	for point_x in cluster1:
 		for point_y in cluster2:
-			distances.append(all_distances[point_x][point_y])
+			distances.append(distance_matrix[point_x][point_y])
+
+	return max(distances)
+
+
+def complete_linkage(cluster1, cluster2):
+	distances = []
+
+	point_x = min(cluster1)
+	point_y = min(cluster2)
+	distances.append(distance_matrix[min(point_x, point_y)][max(point_x, point_y)])
 
 	return max(distances)
 
@@ -272,6 +308,37 @@ def find_nearest(active, cluster, stack_pred=None):
 
 
 
+def update_distance_matrix(dist_mat, pos):
+    '''
+    Updates a distance matrix with merged cluster and sets the two clusters to be merged to 0.
+    It is done this way to allow the simple creation of a linkage matrix.
+    Parameters
+    ----------
+    dist_mat : 2d-array
+        A upper triangular distance matrix.
+    pos : [int,int]
+        Contains the indices of the two clusters to be merged.
+    Returns
+    -------
+    dist_mat : 2d-array
+        The updated distance-matrix
+    '''
+    for i in range(len(dist_mat)):
+        if(i == pos[0] or i == pos[1]): continue
+        max_ = max(dist_mat[i][pos[0]], dist_mat[i][pos[1]])
+        dist_mat[i][pos[0]] = max_
+        dist_mat[i][pos[1]] = max_
+        dist_mat[:,i][pos[0]] = max_
+        dist_mat[:,i][pos[1]] = max_
+
+    dist_mat[pos[1]] = [0 for i in range(len(dist_mat))]
+    dist_mat[:,pos[1]] = [0 for i in range(len(dist_mat))]
+
+    return dist_mat
+
+
+
+
 def euclidean_norm_numeric(points, dimensions=2):
 
 	res = 0
@@ -281,10 +348,10 @@ def euclidean_norm_numeric(points, dimensions=2):
 
 	return np.sqrt(res)
 
-all_distances = [[euclidean_norm_numeric([i, j]) for j in a] for i in a]
-#all_distances = [[[i,j] for j in range(0, len(a))] for i in range(0, len(a))]
+#distance_matrix = [[euclidean_norm_numeric([i, j]) for j in a] for i in a]
+#distance_matrix = [[[i,j] for j in range(0, len(a))] for i in range(0, len(a))]
 
-for line in all_distances:
+for line in distance_matrix:
 	print(line)
 
 nearest_neighbor()
