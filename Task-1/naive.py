@@ -140,7 +140,7 @@ pca = PCA(n_components = 2)
 test_data = pca.fit_transform(normalized_df) 
 
 ##uncomment next line to enter size of test set manually
-test_data = test_data[:1000]
+# test_data = test_data[:1000]
 
 start = time.time()
 my_result = hierarchical_clustering(test_data)
