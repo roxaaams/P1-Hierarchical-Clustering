@@ -35,9 +35,7 @@ def nearest_neighbor():
         # S structure:
         # consists of 2-value arrays where the first value is the cluster index,
         # and the second value is the cluster
-
         # change clusters saved in S to contain only indices
-
         # if stack is empty, append the first active cluster
         if not S:
             S.append([active_clusters[0], [active_clusters[0]]])
@@ -107,16 +105,6 @@ def nearest_neighbor():
 
     for i in clusters:
         print(i)
-
-    '''
-	line =  "[		{c1}.		{c2}.		{distance}			{nr}.		]"
-	total_number_elements_per_cluster = []
-	print("[")
-	for cl in clusters:
-		if (not isinstance(cl.cluster, int)):
-			total_number_elements_per_cluster.append(len(cl.cluster))
-		print(line.format( , , , ))
-   '''
 
 # find nearest cluster
 def find_nearest(active, cluster, stack_pred=None):
