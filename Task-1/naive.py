@@ -9,21 +9,14 @@ Created on Fri Apr  9 20:34:06 2021
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as shc
-import pandas as pd
-
-
-from sklearn.preprocessing import StandardScaler, normalize
-from sklearn.decomposition import PCA
 
 from sklearn.metrics import pairwise_distances as pair_dist
 
-from joblib import Parallel, delayed
-
 import time
 
-
-import findMin
-import updateDistanceMatrix as update
+import find_minimal
+import update_distance_matrix as update
+import get_data 
 
 ### Using a "linkagematrix" to later plot dendrogram from scipy.cluster.hierarchy and keep track of clusters
 ### as described here:  https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html
@@ -63,8 +56,8 @@ def hierarchical_clustering(data):
     # Choose if parallelization should be used. Parallelizing introduces overhead, so for smaller datasets it's quicker to not 
     # parallelize.
     if(len(data) <= 1500):
-        find_min = findMin.find_min_single
-    else: find_min = findMin.find_min_wrapper
+        find_min = find_minimal.find_min_single
+    else: find_min = find_minimal.find_min_wrapper
     
     # pick element
     [pos,val] = find_min(distance_matrix, jobs)
@@ -120,27 +113,12 @@ def hierarchical_clustering(data):
     return linkage_matrix
 
 
-    
-raw_df = pd.read_csv('cc-data.csv')
-raw_df = raw_df.drop('CUST_ID', axis = 1) 
-raw_df.fillna(method ='ffill', inplace = True) 
+path = "cc-data.csv"
+test_data = get_data.read_and_normalize(path)
 
-# Standardize data
-scaler = StandardScaler() 
-scaled_df = scaler.fit_transform(raw_df) 
-  
-# Normalizing the Data 
-normalized_df = normalize(scaled_df) 
-  
-# Converting the numpy array into a pandas DataFrame 
-normalized_df = pd.DataFrame(normalized_df) 
-  
-# Reducing the dimensions of the data 
-pca = PCA(n_components = 2) 
-test_data = pca.fit_transform(normalized_df) 
 
 ##uncomment next line to enter size of test set manually
-# test_data = test_data[:1000]
+#test_data = test_data[:1000]
 
 start = time.time()
 my_result = hierarchical_clustering(test_data)
