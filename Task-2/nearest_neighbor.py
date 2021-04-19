@@ -1,32 +1,23 @@
 import numpy as np
-
-from scipy.cluster.hierarchy import dendrogram, linkage
-import scipy.cluster.hierarchy as shc
 import sys
-
-from matplotlib import pyplot as plt
 
 from collections import deque
 from sklearn.metrics import pairwise_distances as pair_dist
 
 from preprocessing import preprocess
 from distance_computation import update_distance_matrix, complete_linkage
+from scipy_solution import print_scipy_solution
 
 np.set_printoptions(threshold=sys.maxsize, precision=2)
 
 a = preprocess()
 a = a[:10]
-
 cluster_index = len(a)
-
 clusters = []
-
 global distance_matrix
 distance_matrix = pair_dist(a)
 
-
 def nearest_neighbor():
-
     global cluster_index
     global distance_matrix
     global a
@@ -49,14 +40,10 @@ def nearest_neighbor():
 
         # if stack is empty, append the first active cluster
         if not S:
-            # put val in braces?
             S.append([active_clusters[0], [active_clusters[0]]])
             active_clusters.remove(active_clusters[0])
-
         # when a cluster is pushed to the stack, delete it in active_clusters
-
         elif len(S) == 1:
-
             unpacked = unpack_cluster(S[-1])
             nearest_distance, cluster, is_stack = find_nearest(
                 active_clusters, unpacked)
@@ -66,7 +53,6 @@ def nearest_neighbor():
                 active_clusters.remove(cluster)
             elif cluster[0] in active_clusters:
                 active_clusters.remove(cluster[0])
-
         else:
             unpacked_1 = unpack_cluster(S[-1])
             unpacked_2 = unpack_cluster(S[-2])
@@ -102,7 +88,6 @@ def nearest_neighbor():
                     active_clusters.remove(cluster[0])
 
     while len(S) > 1:
-
         pred = S.pop()
         preped = S.pop()
 
@@ -135,7 +120,6 @@ def nearest_neighbor():
 
 # find nearest cluster
 def find_nearest(active, cluster, stack_pred=None):
-
     if isinstance(cluster, int):
         cluster = [cluster]
 
@@ -144,7 +128,6 @@ def find_nearest(active, cluster, stack_pred=None):
     is_stack = False
 
     for i in active:
-
         aggdiv = None
         nrst = i
 
@@ -162,7 +145,6 @@ def find_nearest(active, cluster, stack_pred=None):
             nearest_cluster = nrst
 
     if stack_pred != None:
-
         if isinstance(stack_pred, int):
             stack_pred = [stack_pred]
 
@@ -179,7 +161,6 @@ def find_nearest(active, cluster, stack_pred=None):
 
 
 def merge_clusters(pos, c1, c2):
-
     merged_cluster = []
 
     c1 = unpack_cluster(c1)
@@ -189,7 +170,6 @@ def merge_clusters(pos, c1, c2):
     merged_cluster.extend(c2)
 
     return [pos, merged_cluster]
-
 
 def unpack_cluster(cluster):
     unpacked_cluster = []
@@ -205,24 +185,5 @@ def unpack_cluster(cluster):
 
 # for line in distance_matrix:
 #    print(line)
-
-
-def print_scipy_solution():
-    global a
-    professional_implementation = shc.linkage(
-        a, method='complete', metric="euclidean")
-    print(professional_implementation)
-    #tests = [(x,y) for i in range(len(professional_implementation)) for x,y in zip(result[i],professional_implementation[i]) if x != y ]
-    # sch.dendrogram
-    # print(tests)
-    #print(all([all(x == y) for x,y in zip(result,professional_implementation)]))
-
-    linked = linkage(a, 'complete')
-    labelList = range(0, 10)
-    #plt.figure(figsize=(10, 7))
-    # shc.dendrogram(linked,)
-    # plt.show()
-
-
 nearest_neighbor()
-print_scipy_solution()
+print_scipy_solution(a)
