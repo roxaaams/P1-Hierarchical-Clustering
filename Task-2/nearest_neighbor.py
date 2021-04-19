@@ -91,14 +91,16 @@ def merge_clusters(pos, c1, c2):
 
 def unpack_cluster(cluster):
 	unpacked_cluster = []
+
 	if isinstance(cluster[0], int) and isinstance(cluster[-1][0], int):
 		return cluster[-1]
 	elif isinstance(cluster[0], int):
 		for val in cluster[1]:
 			unpacked_cluster.append(val[-1][0])
 	else:
-		for val in cluster:
-			unpacked_cluster.append(val[-1][0])
+		for val in cluster[1]:
+			print(val)
+			unpacked_cluster.append(val[1][0])
 	return unpacked_cluster
 
 
@@ -127,7 +129,10 @@ def nearest_neighbor():
 
 		# if stack is empty, append the first active cluster
 		if not S:
-			S.append([active_clusters[0], [active_clusters[0]]]) # put val in braces?
+			if isinstance(active_clusters[0], int):
+				S.append([active_clusters[0], [active_clusters[0]]]) # put val in braces?
+			else:
+				S.append(active_clusters[0])
 			active_clusters.remove(active_clusters[0])
 
 		# when a cluster is pushed to the stack, delete it in active_clusters
@@ -345,13 +350,22 @@ def euclidean_norm_numeric(points, dimensions=2):
 #distance_matrix = [[euclidean_norm_numeric([i, j]) for j in a] for i in a]
 #distance_matrix = [[[i,j] for j in range(0, len(a))] for i in range(0, len(a))]
 
-for line in distance_matrix:
-	print(line)
+#for line in distance_matrix:
+#	print(line)
+
+
+#import time
+#start_time = time.time()
+
 
 nearest_neighbor()
-
 professional_implementation = shc.linkage(a, method ='complete', metric = "euclidean")
-print(professional_implementation)
+
+#print("finished")
+#print("--- %s seconds ---" % (time.time() - start_time))
+
+#professional_implementation = shc.linkage(a, method ='complete', metric = "euclidean")
+#print(professional_implementation)
 #tests = [(x,y) for i in range(len(professional_implementation)) for x,y in zip(result[i],professional_implementation[i]) if x != y ]
 
 #sch.dendrogram
