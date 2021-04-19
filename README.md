@@ -15,11 +15,10 @@ To change the size of the dataset used for this implementation, change line 287 
 # Nearest-neighbor chain algorithm implementation
 
 a) Without Docker
-
-`pip3 install -r requirements.txt
-cd Task-2
-python3.7 nearest_neighbor.py`
+    `pip3 install -r requirements.txt
+    cd Task-2
+    python3.7 nearest_neighbor.py`
 
 b) With Docker
-`docker build -t task2 -f Dockerfile.task2 .
-docker run -it task2:latest `
+    `docker build -t task2 -f Dockerfile.task2 .
+    docker run -it task2:latest `
