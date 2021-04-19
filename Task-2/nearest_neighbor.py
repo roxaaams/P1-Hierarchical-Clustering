@@ -11,7 +11,7 @@ from scipy_solution import print_scipy_solution
 np.set_printoptions(threshold=sys.maxsize, precision=2)
 
 a = preprocess()
-a = a[:10]
+a = a[:100]
 cluster_index = len(a)
 clusters = []
 global distance_matrix
@@ -38,7 +38,10 @@ def nearest_neighbor():
         # change clusters saved in S to contain only indices
         # if stack is empty, append the first active cluster
         if not S:
-            S.append([active_clusters[0], [active_clusters[0]]])
+            if isinstance(active_clusters[0], int):
+                S.append([active_clusters[0], [active_clusters[0]]])
+            else:
+                S.append(active_clusters[0])
             active_clusters.remove(active_clusters[0])
         # when a cluster is pushed to the stack, delete it in active_clusters
         elif len(S) == 1:
